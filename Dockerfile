@@ -33,9 +33,42 @@ RUN apt-get update && apt-get install -y \
     ca-certificates\
     && rm -rf /var/lib/apt/lists/*
 
-RUN apt update && apt upgrade -y
-# Istalando ffmpeg
-RUN apt-get install ffmpeg -y
+# Install pyenv dependencies
+RUN apt-get update && apt-get install -y \
+    make \
+    build-essential \
+    libssl-dev \
+    zlib1g-dev \
+    libbz2-dev \
+    libreadline-dev \
+    libsqlite3-dev \
+    llvm \
+    libncurses5-dev \
+    xz-utils \
+    tk-dev \
+    libxml2-dev \
+    libxmlsec1-dev \
+    libffi-dev \
+    liblzma-dev
+
+# Istalando ffmpeg Install pyenv dependencies
+RUN apt-get update && apt-get install -y \
+    make \
+    build-essential \
+    libssl-dev \
+    zlib1g-dev \
+    libbz2-dev \
+    libreadline-dev \
+    libsqlite3-dev \
+    llvm \
+    libncurses5-dev \
+    xz-utils \
+    tk-dev \
+    libxml2-dev \
+    libxmlsec1-dev \
+    libffi-dev \
+    liblzma-dev
+
 
 # Install pyenv
 RUN git clone https://github.com/pyenv/pyenv.git ~/.pyenv
@@ -43,21 +76,27 @@ ENV HOME="/root"
 ENV PYENV_ROOT="$HOME/.pyenv"
 ENV PATH="$PYENV_ROOT/bin:$PATH"
 RUN echo 'eval "$(pyenv init --path)"' >> ~/.bashrc
+RUN echo 'eval "$(pyenv virtualenv-init -)"' >> ~/.bashrc
 
-# Install Python 3.7.6 using pyenv
-RUN /bin/bash -c "source ~/.bashrc && pyenv install 3.7.6 && pyenv global 3.7.6"
+# Install Python 3.6 using pyenv
+RUN eval "$(pyenv init --path)" && \
+    pyenv install 3.6.13 && \
+    pyenv global 3.6.13
 
 # Upgrade pip
-RUN /bin/bash -c "source ~/.bashrc && python3 -m pip install --upgrade pip"
+RUN python3 -m pip install --upgrade pip
 
+
+RUN apt update && apt upgrade -y
+RUN apt-get install ffmpeg -y
 
 
 # # Instalando opencv
-# RUN pip3 install opencv-python
+RUN python3 -m pip install opencv-python==4.6.0.66 
 # # Instalando rclpy
-# RUN pip3 install roslibpy
+RUN pip install roslibpy
 # # Instalando o numpy
-# RUN pip3 install numpy
+RUN pip install numpy
 
 # Atualize os pacotes e instale o curl
 RUN apt-get update && apt-get install -y curl && rm -rf /var/lib/apt/lists/*
